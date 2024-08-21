@@ -32,14 +32,14 @@ NavMenu.propTypes = {
 const AuthNavMenu = () => (
   <>
     <li className="my-2 lg:my-0">
-      <button className="border-white border-2 text-white hover:bg-blue-600 hover:text-white py-1.5 px-4 rounded">
+      <a href="/signup" className="border-white border-2 text-white hover:bg-blue-600 hover:text-white py-1.5 px-4 rounded">
         Sign Up
-      </button>
+      </a>
     </li>
     <li className="my-2 lg:my-0">
-      <button className="border-white border-2 text-white hover:bg-blue-600 hover:text-white py-1.5 px-4 rounded">
+      <a href="/login" className="border-white border-2 text-white hover:bg-blue-600 hover:text-white py-1.5 px-4 rounded">
         Log In
-      </button>
+      </a>
     </li>
   </>
 );
@@ -52,7 +52,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="ezy__nav2 light py-4 bg-white dark:bg-[#0b1727] text-zinc-900 dark:text-white">
+    <div className="ezy__nav2 light py-4 bg-white dark:bg-[#0b1727] text-zinc-900 dark:text-white sticky top-0 z-50">
       <nav>
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex justify-between items-center">
