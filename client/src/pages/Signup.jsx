@@ -87,7 +87,7 @@ const Signup = () => {
                       alt=""
                     />
                     <div className="text-center mt-12">
-                      <a href="#!" className="underline hover:text-blue-600 duration-300">
+                      <a href="/login" className="underline hover:text-blue-200 duration-300">
                         I am already a member
                       </a>
                     </div>
