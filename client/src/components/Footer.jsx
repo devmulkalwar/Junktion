@@ -105,7 +105,7 @@ const Footer = () => {
               </div>
 
               <div>
-                <h3 className="text-gray-700 uppercase dark:text-white">Products</h3>
+                <h3 className="text-gray-700 uppercase dark:text-white">Traders</h3>
                 <a
                   href="#"
                   className="block mt-2 text-sm text-gray-600 dark:text-gray-400 hover:underline">
@@ -114,7 +114,7 @@ const Footer = () => {
                 <a
                   href="#"
                   className="block mt-2 text-sm text-gray-600 dark:text-gray-400 hover:underline">
-                  Scrap
+                  Scrap-dealer
                 </a>
                 <a
                   href="#"
@@ -132,7 +132,7 @@ const Footer = () => {
                   +91 9322259967
                 </span>
                 <span className="block mt-2 text-sm text-gray-600 dark:text-gray-400 hover:underline">
-                  devmulkalwar69@email.com
+                  devmulkalwar95@gmail.com
                 </span>
               </div>
             </div>
