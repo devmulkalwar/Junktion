@@ -25,6 +25,15 @@ const userSchema = new mongoose.Schema({
     enum: ['seller', 'buyer'],
     default: 'buyer',
   },
+  address: {
+    type: String, 
+    required: [true, 'Provide valid address'],    
+  },
+  mobileNumber: {
+    type: String,
+    required: [true, 'Please provide a valid mobile number'],
+    unique: true,
+  },
 });
 
 // Hash password before saving the user
