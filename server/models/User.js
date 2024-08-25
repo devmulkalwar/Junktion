@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['seller', 'buyer'],
+    enum: ['Kabadiwala', 'Scrap Dealer'],
     default: 'buyer',
   },
   address: {
@@ -31,8 +31,9 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: {
     type: String,
-    required: [true, 'Please provide a valid mobile number'],
+    required: [true],
     unique: true,
+    match: [/^\d{10}$/, 'Please provide a valid mobile number']
   },
 });
 

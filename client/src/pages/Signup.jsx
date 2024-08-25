@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { MdAddAPhoto } from "react-icons/md";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -38,10 +39,34 @@ const Signup = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your form submission logic here, including handling the profile image
-    console.log("Form Data Submitted:", formData);
+
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      mobileNumber: formData.mobile,
+      address: formData.address,
+      role: formData.role,
+    };
+
+    try {
+      // Sending the POST request
+      if (formData.password === formData.confirmPassword) {
+        const response = await axios.post(
+          "http://localhost:3000/api/auth/register",
+          payload
+        );
+
+        // If successful, log the response
+        console.log("Response:", response.data);
+      } else {
+        console.log("Passwords do not match");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -146,7 +171,10 @@ const Signup = () => {
                       />
                     </div>
                     <div>
-                      <label className="block mb-2 font-normal" htmlFor="password">
+                      <label
+                        className="block mb-2 font-normal"
+                        htmlFor="password"
+                      >
                         Password
                       </label>
                       <input
@@ -161,11 +189,14 @@ const Signup = () => {
                       />
                     </div>
                     <div>
-                      <label className="block mb-2 font-normal" htmlFor="confirmPassword">
+                      <label
+                        className="block mb-2 font-normal"
+                        htmlFor="confirmPassword"
+                      >
                         Confirm Password
                       </label>
                       <input
-                      id="confirmPassword"
+                        id="confirmPassword"
                         type="password"
                         name="confirmPassword"
                         value={formData.confirmPassword}
@@ -176,7 +207,10 @@ const Signup = () => {
                       />
                     </div>
                     <div>
-                      <label className="block mb-2 font-normal" htmlFor="mobile">
+                      <label
+                        className="block mb-2 font-normal"
+                        htmlFor="mobile"
+                      >
                         Mobile Number
                       </label>
                       <input
@@ -191,7 +225,10 @@ const Signup = () => {
                       />
                     </div>
                     <div>
-                      <label className="block mb-2 font-normal" htmlFor="address">
+                      <label
+                        className="block mb-2 font-normal"
+                        htmlFor="address"
+                      >
                         Address
                       </label>
                       <input
@@ -209,7 +246,7 @@ const Signup = () => {
                     <button
                       type="submit"
                       onClick={handleSubmit}
-                      className={`w-full px-4 py-2 rounded-md shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      className={`text-white py-3 px-6 rounded w-full font-bold ${
                         formData.role === "Kabadiwala"
                           ? "bg-indigo-500 text-white"
                           : "bg-green-500 text-white"

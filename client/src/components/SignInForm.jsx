@@ -15,11 +15,26 @@ const SignInForm = () => {
       setCheck(!check);
     };
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
-      // Add your form submission logic here, including handling the profile image
-      console.log("Form Data Submitted:", formData);
+      
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+      }
+  
+      try {
+        // Sending the POST request
+        const response = await axios.post('http://localhost:3000/api/auth/register', payload);
+    
+        // If successful, log the response
+        console.log('Response:', response.data);
+    
+      } catch (error) {
+       console.log(error);
+      }
     };
+    
   
     return (
       <form onSubmit={handleSubmit}>
