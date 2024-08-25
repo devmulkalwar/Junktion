@@ -10,10 +10,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide an email'],
     unique: true,
-    match: [
-      /^\w+([.-]?\w+)+@\w+([.-]?\w+)+(\.\w{2,3})+$/,
-      'Please provide a valid email',
-    ],
+    match: [/^\w+([.-]?\w+)+@\w+([.-]?\w+)+(\.\w{2,3})+$/, 'Please provide a valid email'],
   },
   password: {
     type: String,
@@ -22,17 +19,19 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['seller', 'buyer'],
-    default: 'buyer',
+    enum: ['Kabadiwala', 'Scrap Dealer'], // Update enum values here
+    default: 'Kabadiwala', // or whichever default role you want
   },
   address: {
-    type: String, 
-    required: [true, 'Provide valid address'],    
+    type: String,
+    required: [true, 'Provide valid address'],
   },
   mobileNumber: {
     type: String,
     required: [true, 'Please provide a valid mobile number'],
     unique: true,
+    // Relax regex temporarily for testing
+    match: [/^\d+$/, 'Please provide a valid mobile number'],
   },
 });
 
