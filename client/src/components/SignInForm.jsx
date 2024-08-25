@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom'
 
 const SignInForm = () => {
     const [formData, setFormData] = useState({
       email: "",
       password: "",
     });
-    const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState(false);
+  const navigate = useNavigate(); // Import useNavigate
   
     const handleInputChange = (e) => {
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,28 +15,38 @@ const SignInForm = () => {
   
     const onCheck = () => {
       setCheck(!check);
-    };
+  };
   
     const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
-      
-      const payload = {
-        email: formData.email,
-        password: formData.password,
-      }
-  
       try {
-        // Sending the POST request
-        const response = await axios.post('http://localhost:3000/api/auth/register', payload);
-    
-        // If successful, log the response
-        console.log('Response:', response.data);
-    
+        const response = await fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+        console.log('Response from server:', data);
+
+        if (response.ok) {
+          // Store user data and token in local storage
+          localStorage.setItem('user', JSON.stringify(data.data));
+          localStorage.setItem('token', data.token);
+
+          // Redirect to homepage
+          navigate('/home'); // Adjust the path as needed
+        } else {
+          alert(`Error: ${data.message}`);
+        }
       } catch (error) {
-       console.log(error);
+        console.error('Error submitting form:', error);
+        alert('Error submitting form. Check console for details.');
       }
     };
-    
   
     return (
       <form onSubmit={handleSubmit}>
