@@ -4,8 +4,12 @@ import axios from "axios";
 import ProfileUpload from "./ProfileUpload";
 import RoleToggleButton from "./RoleToggleButton";
 import InputField from "./InputField";
+import { useGlobalContext } from "../contexts/GlobalContext"; // Import Global Context
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
+  const navigate = useNavigate();
+  const { login } = useGlobalContext(); // Access login method from context
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,6 +47,7 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Create a FormData object to send the file along with other fields
     const payload = {
       name: formData.name,
       email: formData.email,
@@ -50,6 +55,7 @@ const SignupForm = () => {
       mobileNumber: formData.mobile,
       address: formData.address,
       role: formData.role,
+      // profileImage: formData.profileImage // This would just store the reference, not upload the file properly
     };
 
     try {
@@ -58,12 +64,22 @@ const SignupForm = () => {
           "http://localhost:3000/api/auth/register",
           payload
         );
-        console.log("Response:", response.data);
+
+        if(response.status === 201){
+          // Assuming the API returns the user data and token upon successful signup
+          login(response.data.data, response.data.token); // Store user data and token in global context
+          console.log("Signup successful:", response.data.data);
+        }else{
+          alert(`Error: ${response.data.message}`);
+          console.log("Error signing up:", error);
+        }
       } else {
         console.log("Passwords do not match");
+        alert("Passwords do not match");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error submitting form:", error);
+      alert("Error submitting form. Check console for details.");
     }
   };
 

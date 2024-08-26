@@ -1,22 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Add axios import
+import axios from "axios";
 import InputField from "./InputField";
+import { useGlobalContext } from "../contexts/GlobalContext"; // Import useGlobalContext
 
 const SignInForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [check, setCheck] = useState(false);
+
   const navigate = useNavigate();
+  const { login } = useGlobalContext(); // Destructure login from the context
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onCheck = () => {
-    setCheck(!check);
   };
 
   const handleSubmit = async (e) => {
@@ -32,12 +30,10 @@ const SignInForm = () => {
       const response = await axios.post("http://localhost:3000/api/auth/login", payload);
 
       if (response.status === 200) {
-        // Store user data and token in local storage
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-        localStorage.setItem("token", response.data.token);
-
-        // Redirect to homepage
-        navigate("/home"); // Adjust the path as needed
+        // Use the login function from the context to handle authentication
+        login(response.data.data, response.data.token);
+        console.log("login successful:", response.data.data);
+        
       } else {
         alert(`Error: ${response.data.message}`);
       }

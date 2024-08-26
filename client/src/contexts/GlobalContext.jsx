@@ -1,23 +1,53 @@
-// src/context/GlobalContext.js
-
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Create a Context for the global state
 const GlobalContext = createContext();
 
 // Create a provider component
 export const ContextProvider = ({ children }) => {
-  // Initialize with null or a suitable default value
-  const [user, setUser] = useState("dev"); 
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Authentication status
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
 
+  // Function to handle login
+  const login = (userData, authToken) => {
+    setUser(userData);
+    setToken(authToken);
+    setIsAuthenticated(true);
+    localStorage.setItem('token', authToken);
+    localStorage.setItem('user', JSON.stringify(userData));
+    navigate("/");
+  };
+
+  // Function to handle logout
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  
+
+  // Memoize the context value to avoid unnecessary re-renders
   const contextValue = {
     user,
-  };
+    setUser,
+    setToken,
+    isAuthenticated,
+    setIsAuthenticated,
+    token,
+    login,
+    logout,
+  }
 
   return (
     <GlobalContext.Provider value={contextValue}>
-        {children}
+      {children}
     </GlobalContext.Provider>
   );
 };
