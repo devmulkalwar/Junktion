@@ -18,7 +18,6 @@ const SignInForm = () => {
   };
   
     const handleSubmit = async (e) => {
-    const handleSubmit = async (e) => {
       e.preventDefault();
       try {
         const response = await fetch('http://localhost:3000/api/auth/login', {
@@ -101,4 +100,4 @@ const SignInForm = () => {
     );
   };
   
-export default SignInForm
+export default SignInForm;
