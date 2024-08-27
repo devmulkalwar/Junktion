@@ -1,8 +1,14 @@
-// src/components/Signup/ProfileImageUpload.js
 import React from "react";
 import { MdAddAPhoto } from "react-icons/md";
 
-const ProfileUpload = ({ imagePreview, role, handleClickImageUpload, handleImageChange, fileInputRef }) => {
+const ProfileUpload = ({
+  imagePreview,
+  role,
+  handleClickImageUpload,
+  handleImageChange,
+  fileInputRef,
+  uploading,
+}) => {
   return (
     <div className="relative">
       {imagePreview ? (
@@ -16,15 +22,22 @@ const ProfileUpload = ({ imagePreview, role, handleClickImageUpload, handleImage
           No Image
         </div>
       )}
+
       <button
         type="button"
         onClick={handleClickImageUpload}
         className={`absolute bottom-0 right-0 text-white p-2 rounded-full shadow-md ${
           role === "Kabadiwala" ? "bg-indigo-500" : "bg-green-500"
         }`}
+        disabled={uploading} // Disable button while uploading
       >
-        <MdAddAPhoto size={24} />
+        {uploading ? (
+          <span className="loader">loading..</span> // Optionally, you can add a loader indicator
+        ) : (
+          <MdAddAPhoto size={24} />
+        )}
       </button>
+
       <input
         type="file"
         name="profileImage"

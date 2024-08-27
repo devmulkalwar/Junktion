@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { useGlobalContext } from "./contexts/GlobalContext.jsx";
 
 // pages import
 import Home from "./pages/Home.jsx";
@@ -16,6 +17,8 @@ import Materials from "./pages/Materials.jsx";
 import Services from "./pages/Services.jsx";
 import Landing from "./pages/Landing.jsx";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute
+import NonProtectedRoute from "./components/NonProtectedRoute.jsx";
+
 
 const router = createBrowserRouter([
   {
@@ -31,8 +34,22 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      { path: "login", element: <Login /> },
-      { path: "signup", element: <Signup /> },
+      {
+        path: "login",
+        element: (
+          <NonProtectedRoute>
+            <Login />
+          </NonProtectedRoute>
+        ),
+      },
+      {
+        path: "signup",
+        element: (
+          <NonProtectedRoute>
+            <Signup />
+          </NonProtectedRoute>
+        ),
+      },
       {
         path: "about",
         element: (
@@ -71,7 +88,11 @@ const router = createBrowserRouter([
       },
       {
         path: "landingpage",
-        element: <Landing />,
+        element: (
+          <NonProtectedRoute>
+            <Landing />
+          </NonProtectedRoute>
+        ),
       },
     ],
   },
