@@ -1,4 +1,3 @@
-// src/components/Signup/SignupForm.js
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import ProfileUpload from "./ProfileUpload";
@@ -18,9 +17,10 @@ const SignupForm = () => {
     mobile: "",
     address: "",
     role: "Kabadiwala",
-    profileImage: null,
+    profileImage: null, // Image file stored locally
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
@@ -29,8 +29,16 @@ const SignupForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setFormData({ ...formData, profileImage: file });
-    setImagePreview(URL.createObjectURL(file));
+    if (file) {
+      // Set image preview
+      setImagePreview(URL.createObjectURL(file));
+
+      // Store the file locally in formData
+      setFormData((prevState) => ({
+        ...prevState,
+        profileImage: file,
+      }));
+    }
   };
 
   const handleClickImageUpload = () => {
@@ -47,39 +55,58 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create a FormData object to send the file along with other fields
-    const payload = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      mobileNumber: formData.mobile,
-      address: formData.address,
-      role: formData.role,
-      // profileImage: formData.profileImage // This would just store the reference, not upload the file properly
-    };
-
     try {
+      // Upload the image only when the form is submitted
+      let imageUrl = "";
+
+      if (formData.profileImage) {
+        setUploading(true);
+
+        // Create FormData to send to Cloudinary
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", formData.profileImage);
+        uploadFormData.append("upload_preset", "t9dkbte8"); // Replace with your Cloudinary upload preset
+        uploadFormData.append("cloud_name", "duegl06ax"); // Replace with your Cloudinary cloud name
+
+        // Upload image to Cloudinary
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/duegl06ax/image/upload", // Replace with your Cloudinary URL
+          uploadFormData
+        );
+
+        imageUrl = response.data.secure_url; // Get the uploaded image URL
+      }
+
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        mobileNumber: formData.mobile,
+        address: formData.address,
+        role: formData.role,
+        profileImage: imageUrl, // Use the final image URL
+      };
+
       if (formData.password === formData.confirmPassword) {
         const response = await axios.post(
           "http://localhost:3000/api/auth/register",
           payload
         );
 
-        if(response.status === 201){
-          // Assuming the API returns the user data and token upon successful signup
+        if (response.status === 201) {
           login(response.data.data, response.data.token); // Store user data and token in global context
           console.log("Signup successful:", response.data.data);
-        }else{
+        } else {
           alert(`Error: ${response.data.message}`);
-          console.log("Error signing up:", error);
         }
       } else {
-        console.log("Passwords do not match");
         alert("Passwords do not match");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Error submitting form. Check console for details.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -92,6 +119,7 @@ const SignupForm = () => {
           handleClickImageUpload={handleClickImageUpload}
           handleImageChange={handleImageChange}
           fileInputRef={fileInputRef}
+          uploading={uploading} // Pass uploading state
         />
         <RoleToggleButton role={formData.role} toggleRole={toggleRole} />
       </div>
@@ -146,12 +174,11 @@ const SignupForm = () => {
       <button
         type="submit"
         className={`text-white py-3 px-6 rounded w-full font-bold ${
-          formData.role === "Kabadiwala"
-            ? "bg-indigo-500 text-white"
-            : "bg-green-500 text-white"
+          formData.role === "Kabadiwala" ? "bg-indigo-500" : "bg-green-500"
         }`}
+        disabled={uploading} // Disable submit button while uploading
       >
-        Sign Up
+        {uploading ? "Uploading..." : "Sign Up"}
       </button>
     </form>
   );

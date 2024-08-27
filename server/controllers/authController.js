@@ -11,7 +11,7 @@ const generateToken = (id) => {
 
 // Register new user
 exports.register = async (req, res) => {
-  const { name, email, password, role, address, mobileNumber } = req.body;
+  const { name, email, password, role, address, mobileNumber, profileImage} = req.body;
   try { 
     // Check if user exists
     let user = await User.findOne({ email });
@@ -27,6 +27,7 @@ exports.register = async (req, res) => {
       role,
       address,
       mobileNumber,
+      profileImage
     });
 
     // Respond with token
@@ -40,6 +41,7 @@ exports.register = async (req, res) => {
         role: user.role,
         address: user.address,
         mobileNumber: user.mobileNumber,
+        profileImage : user.profileImage
       },
       token,
     });
@@ -74,6 +76,9 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
+        mobileNumber: user.mobileNumber,
+        profileImage : user.profileImage
       },
       token,
     });

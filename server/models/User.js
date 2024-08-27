@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema({
     unique: true,
     match: [/^\d{10}$/, 'Please provide a valid mobile number']
   },
+  profileImage: {
+    type: String, 
+  },
 });
 
 // Hash password before saving the user
