@@ -1,0 +1,20 @@
+// Import mongoose and dotenv in ESM style
+import mongoose from 'mongoose';
+import { config as configDotenv } from 'dotenv';
+
+// Load .env variables
+configDotenv();
+
+// Async function to connect to MongoDB
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.DB_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1); 
+  }
+};
+
+// Export the function using ES module syntax
+export default connectDB;

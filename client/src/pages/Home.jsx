@@ -14,7 +14,7 @@ const Home = () => {
   return (
     <div>
       <h1>Welcome, {user.name}!</h1>
-      <img src={user.profileImage} alt="profile image" />
+      <img src={user?.profileImage} alt="profile image" />
       <p>Role: {user.role}</p>
     </div>
   );
