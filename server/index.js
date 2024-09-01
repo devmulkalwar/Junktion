@@ -1,28 +1,25 @@
-const express = require("express");
-const connectDB = require("./config/db");
-const cors = require("cors")
-const authRoutes = require("./routes/authRoutes");
-const dotenv = require("dotenv");
-dotenv.config(); // Load environment variables from .env
-// Connect to database
-connectDB();
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+import connectDB  from "./config/dbConnection.js";
+import authRoutes from "./routes/authRoutes.js";
+
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Middleware to parse incoming JSON
-app.use(express.json());
 app.use(cors());
 
-// Routes
+app.use(express.json()); // allows us to parse incoming requests:req.body
+app.use(cookieParser()); // allows us to parse incoming cookies
+
 app.use("/api/auth", authRoutes);
 
-// Basic route for testing
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
 
-// Start server
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+	connectDB();
+	console.log("Server is running on port: ", PORT);
 });

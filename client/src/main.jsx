@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useGlobalContext } from "./contexts/GlobalContext.jsx";
+import { NextUIProvider } from "@nextui-org/react";
 
 // pages import
 import Home from "./pages/Home.jsx";
@@ -18,7 +19,6 @@ import Services from "./pages/Services.jsx";
 import Landing from "./pages/Landing.jsx";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute
 import NonProtectedRoute from "./components/NonProtectedRoute.jsx";
-
 
 const router = createBrowserRouter([
   {
@@ -100,6 +100,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <NextUIProvider>
+      <RouterProvider router={router} />
+    </NextUIProvider>
   </StrictMode>
 );
