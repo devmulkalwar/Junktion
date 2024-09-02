@@ -10,34 +10,32 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../mailtrap/emails.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // Register new user
 export const signup = async (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    confirmPassword,
-    mobile,
-    address,
-    profileImage,
-  } = req.body;
+  const { name, email, password, confirmPassword, mobile, address, role } =
+    req.body;
+  const profileImage = req.file;
 
   try {
     // Validate user input
+    console.log("Request body:", req.body);
+    console.log("Profile image:", profileImage);
+
     if (
       !email ||
       !password ||
       !name ||
       !confirmPassword ||
       !mobile ||
-      !address
+      !address ||
+      !role
     ) {
       throw new Error("All fields are required");
     }
 
     if (password === confirmPassword) {
-      // Check if user already exists
       const userAlreadyExists = await User.findOne({ email });
       if (userAlreadyExists) {
         return res
@@ -45,6 +43,14 @@ export const signup = async (req, res) => {
           .json({ success: false, message: "User already exists" });
       }
 
+      // Upload profile image to Cloudinary if it exists
+      let profileImageUrl = "";
+      if (profileImage) {
+        const { path } = profileImage;
+        console.log("image path :", path)
+        const cloudinaryResult = await uploadOnCloudinary(path);
+        console.log("cloudianry result :",cloudinaryResult)
+      }
       // Hash password
       const hashedPassword = await bcryptjs.hash(password, 10);
 
@@ -59,14 +65,16 @@ export const signup = async (req, res) => {
         password: hashedPassword,
         name,
         verificationToken,
-        verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+        verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
         mobile,
         address,
-        profileImage,
+        profileImage: profileImageUrl,
       });
 
-      console.log("User object before saving:", user);
-      await user.save();
+      console.log("User data before saving:", user); // Check if the data is correct
+
+      await user.save(); // Check if save works
+      console.log("User saved successfully");
 
       // Generate JWT token and set cookie
       generateTokenSetCookie(res, user._id);
@@ -74,17 +82,16 @@ export const signup = async (req, res) => {
       // Send verification email
       await sendVerificationEmail(user.email, verificationToken);
 
-      // Respond with user data, omitting the password
       res.status(201).json({
         success: true,
         message: "User created successfully",
-        user: {
-          ...user._doc,
-          password: undefined, // Exclude password
-        },
+        user: { ...user._doc, password: undefined },
       });
+    } else {
+      throw new Error("Passwords do not match");
     }
   } catch (error) {
+    console.error("Error during signup:", error); // Log the error to see details
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -183,13 +190,13 @@ export const forgotPassword = async (req, res) => {
     const resetToken = crypto.randomBytes(20).toString("hex");
     const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
 
-    console.log("Stored token form forgot pass:",resetToken);
+    console.log("Stored token form forgot pass:", resetToken);
     console.log("Token expiration date:", resetTokenExpiresAt);
 
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpiresAt = resetTokenExpiresAt;
     await user.save();
-    console.log()
+    console.log();
     // Send password reset email
     await sendPasswordResetEmail(
       user.email,
@@ -225,7 +232,7 @@ export const resetPassword = async (req, res) => {
     }
 
     console.log("Stored token:", user.resetPasswordToken);
-		console.log("Token expiration date:", user.resetPasswordExpiresAt);
+    console.log("Token expiration date:", user.resetPasswordExpiresAt);
 
     console.log("old password", user.password);
 
@@ -250,15 +257,17 @@ export const resetPassword = async (req, res) => {
 
 //check for authenticated user
 export const checkAuth = async (req, res) => {
-	try {
-		const user = await User.findById(req.userId).select("-password");
-		if (!user) {
-			return res.status(400).json({ success: false, message: "User not found" });
-		}
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
 
-		res.status(200).json({ success: true, user });
-	} catch (error) {
-		console.log("Error in checkAuth ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.log("Error in checkAuth ", error);
+    res.status(400).json({ success: false, message: error.message });
+  }
 };

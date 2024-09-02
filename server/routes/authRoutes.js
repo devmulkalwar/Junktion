@@ -1,20 +1,22 @@
 import express from "express";
 import {
-	login,
-	logout,
-	signup,
-	verifyEmail,
-	forgotPassword,
-	resetPassword,
-	checkAuth,
+  login,
+  logout,
+  signup,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
+  checkAuth,
 } from "../controllers/authController.js";
-import { verifyToken } from "../middleware/verifyToken.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
+import {upload} from "../middleware/multerMiddleware.js";
 
 const router = express.Router();
 
 router.get("/check-auth", verifyToken, checkAuth);
 
-router.post("/signup", signup);
+router.post("/signup", upload.single("profileImage"), signup);
+
 router.post("/login", login);
 router.post("/logout", logout);
 
