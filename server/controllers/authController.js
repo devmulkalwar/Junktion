@@ -50,6 +50,7 @@ export const signup = async (req, res) => {
         console.log("image path :", path)
         const cloudinaryResult = await uploadOnCloudinary(path);
         console.log("cloudianry result :",cloudinaryResult)
+        profileImageUrl = cloudinaryResult.url;
       }
       // Hash password
       const hashedPassword = await bcryptjs.hash(password, 10);
