@@ -1,29 +1,16 @@
-import Navbar from "./components/Navbar";
+import React from "react";
+import Header from './components/Header/Navbar';
 import Footer from "./components/Footer";
-import { Navigate, Outlet } from "react-router-dom";
-import { ContextProvider, useGlobalContext } from "./contexts/GlobalContext"; // Ensure the context import is correct
-import Login from "./pages/Login";
-import Landing from "./pages/Landing";
-
-
+import { Outlet } from 'react-router-dom';
+ 
 function App() {
   return (
-    <ContextProvider>
-      <AppContent />
-    </ContextProvider>
-  );
-}
-
-function AppContent() {
-  const { isAuthenticated } = useGlobalContext(); 
-
-  return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow">
-        <Outlet  /> 
+      <Header/>
+      <main className="flex flex-grow">
+        <Outlet/>
       </main>
-      <Footer />
+      <Footer/>
     </div>
   );
 }

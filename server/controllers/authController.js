@@ -14,21 +14,20 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // Register new user
 export const signup = async (req, res) => {
-  const { name, email, password, confirmPassword, mobile, address, role } =
+  const { name, email, password, confirmPassword, mobileNumber, address, role } =
     req.body;
   const profileImage = req.file;
 
   try {
     // Validate user input
     console.log("Request body:", req.body);
-    console.log("Profile image:", profileImage);
-
+    console.log("profileImage:", profileImage);
     if (
       !email ||
       !password ||
       !name ||
       !confirmPassword ||
-      !mobile ||
+      !mobileNumber ||
       !address ||
       !role
     ) {
@@ -45,6 +44,7 @@ export const signup = async (req, res) => {
 
       // Upload profile image to Cloudinary if it exists
       let profileImageUrl = "";
+      console.log(profileImage);
       if (profileImage) {
         const { path } = profileImage;
         console.log("image path :", path)
@@ -52,6 +52,7 @@ export const signup = async (req, res) => {
         console.log("cloudianry result :",cloudinaryResult)
         profileImageUrl = cloudinaryResult.url;
       }
+
       // Hash password
       const hashedPassword = await bcryptjs.hash(password, 10);
 
@@ -67,9 +68,9 @@ export const signup = async (req, res) => {
         name,
         verificationToken,
         verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
-        mobile,
+        mobileNumber,
         address,
-        profileImage: profileImageUrl,
+        profileImage: profileImageUrl ,
       });
 
       console.log("User data before saving:", user); // Check if the data is correct

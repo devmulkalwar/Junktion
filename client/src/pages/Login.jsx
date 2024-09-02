@@ -1,44 +1,72 @@
-/* eslint-disable react/no-unknown-property */
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import SignInForm from "../components/SignInForm";
+import React, { useState } from 'react';
+import { AiOutlineLock, AiOutlineMail } from 'react-icons/ai'; // Lock and Mail icons
+import { Link } from 'react-router-dom';
+import InputField from '../components/FormComponents/InputField';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
   return (
-    <section className="ezy__signin4 light flex bg-white dark:bg-[#0b1727] text-zinc-900 dark:text-white overflow-hidden">
-      <div className="container px-4 mx-auto min-h-screen max-w-7xl">
-        <div className="grid grid-cols-12 h-96 lg:h-full">
-          <div className="col-span-12 lg:col-span-6 lg:col-start-7 order-2">
-            <div
-              className="hidden lg:block w-full h-full lg:w-[50vw] bg-cover bg-center bg-no-repeat float-left"
-              style={{
-                backgroundImage:
-                  "url(https://images.unsplash.com/photo-1506984548480-17c160170c06?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-                backgroundSize: "75%",
-              }}
-            ></div>
-          </div>
-          <div className="col-span-12 lg:col-span-5 py-12">
-            <div className="flex items-center justify-center h-full">
-              <div className="w-full">
-                <div className="bg-blue-100 bg-opacity-70 dark:bg-slate-800 shadow-xl rounded-2xl p-4 md:p-12">
-                  <h2 className="text-indigo-900 dark:text-white text-3xl font-bold mb-3">
-                    Welcome to Junktion
-                  </h2>
-                  <div className="flex items-center mb-6 md:mb-12">
-                    <p className="mb-0 mr-2 opacity-50">
-                      Don't have an account?
-                    </p>
-                    <Link to="/signup">Create Account</Link>
-                  </div>
-                  <SignInForm />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="flex justify-evenly m-5 lg:m-8 gap-6 items-center flex-col lg:flex-row-reverse flex-grow">
+      <div className="text-center lg:text-left max-w-4xl">
+        <h1 className="text-4xl lg:text-6xl font-bold">Welcome Back!</h1>
+        <p className="hidden lg:block mt-2 text-xl py-6">
+          Junktion is a waste management platform designed to streamline the process of buying and
+          selling scrap materials. Login to continue managing your waste and contributing to a
+          sustainable future.
+        </p>
+        <p className="mt-2 text-md lg:text-xl">
+          Don't have an account yet?
+          <a href="/signup" className="text-md font-semibold text-primary">
+            {' '}
+            Sign Up
+          </a>
+        </p>
       </div>
-    </section>
+
+      <div className="card w-full max-w-2xl shrink-0 shadow-2xl bg-base-300">
+        <form className="card-body grid grid-cols-1 gap-4">
+           {/* Email */}
+           <InputField
+            name="Email"
+            type="email"
+            placeholder="Email"
+            icon={AiOutlineMail}
+            isRequired={true}
+          />
+
+          {/* Password */}
+          <InputField
+            name="Password"
+            type="password"
+            placeholder="Password"
+            icon={AiOutlineLock}
+            isRequired={true}
+          />
+
+          {/* Forgot Password Link */}
+          <div className="form-control">
+            <Link to="/reset-password" className="text-sm text-primary text-right">
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Login Button */}
+          <div className="form-control mt-6">
+            <button className="btn btn-primary w-full">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

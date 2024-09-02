@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       default: "Scrap Dealer",
       required: true,
     },
-    mobile: {
+    mobileNumber: {
       type: String,
       required: true,
       unique: true,
@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema(
     },
     profileImage: {
       type: String,
+      required : true,
     },
     resetPasswordToken: String,
 		resetPasswordExpiresAt: Date,

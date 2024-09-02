@@ -19,6 +19,8 @@ import Services from "./pages/Services.jsx";
 import Landing from "./pages/Landing.jsx";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute
 import NonProtectedRoute from "./components/NonProtectedRoute.jsx";
+import OTPPage from "./pages/OTPPage.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,35 +30,19 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        ),
+        element: <Home />,
       },
       {
         path: "login",
-        element: (
-          <NonProtectedRoute>
-            <Login />
-          </NonProtectedRoute>
-        ),
+        element: <Login />,
       },
       {
         path: "signup",
-        element: (
-          <NonProtectedRoute>
-            <Signup />
-          </NonProtectedRoute>
-        ),
+        element: <Signup />,
       },
       {
         path: "about",
-        element: (
-          <ProtectedRoute>
-            <About />
-          </ProtectedRoute>
-        ),
+        element: <About />,
       },
       {
         path: "contact",
@@ -64,35 +50,27 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        ),
+        element: <Profile />,
       },
       {
         path: "materials",
-        element: (
-          <ProtectedRoute>
-            <Materials />
-          </ProtectedRoute>
-        ),
+        element: <Materials />,
       },
       {
         path: "services",
-        element: (
-          <ProtectedRoute>
-            <Services />
-          </ProtectedRoute>
-        ),
+        element: <Services />,
       },
       {
         path: "landingpage",
-        element: (
-          <NonProtectedRoute>
-            <Landing />
-          </NonProtectedRoute>
-        ),
+        element: <Landing />,
+      },
+      {
+        path: "verify-otp",
+        element: <OTPPage />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
       },
     ],
   },
@@ -100,8 +78,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <NextUIProvider>
-      <RouterProvider router={router} />
-    </NextUIProvider>
+    <RouterProvider router={router} />
   </StrictMode>
 );

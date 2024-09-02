@@ -1,45 +1,212 @@
-// src/pages/Signup.js
-import React from "react";
-import SignupForm from "../components/SignupForm";
+import React, { useState } from "react";
+import {
+  AiOutlineMail,
+  AiOutlineLock,
+  AiOutlineUser,
+  AiOutlinePhone,
+  AiOutlineHome,
+} from "react-icons/ai"; // Mail, Lock, User, Phone, and Home icons
+import RoleToggle from "../components/FormComponents/RoleToggle";
+import UploadProfile from "../components/FormComponents/UploadProfile";
+import InputField from "../components/FormComponents/InputField";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-const Signup = () => {
+const SignUp = () => {
+  const [role, setRole] = useState("Kabadiwala");
+  const [profilePic, setProfilePic] = useState(null);
+  const [signUpData, setSignUpData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "Scrap Dealer",
+    mobileNumber: "",
+    address: "",
+    profileImage: null,
+  });
+  const [isloading, setIsloading] = useState(false);
+
+  const handleRoleToggle = () => {
+    const newRole = role === "Kabadiwala" ? "Scrap Dealer" : "Kabadiwala";
+    setRole(newRole);
+    setSignUpData({ ...signUpData, role: newRole });
+  };
+
+  const handleProfilePicChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setProfilePic(URL.createObjectURL(file)); // Preview the image
+      setSignUpData({ ...signUpData, profileImage: file }); // Store the file object
+    } else {
+      setProfilePic(null);
+      setSignUpData({ ...signUpData, profileImage: null });
+    }
+  };
+
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setSignUpData({ ...signUpData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsloading(true);
+    
+    // Create a new FormData object
+    const formData = new FormData();
+  
+    // Append form fields to FormData
+    formData.append("name", signUpData.name);
+    formData.append("email", signUpData.email);
+    formData.append("role", signUpData.role);
+    formData.append("password", signUpData.password);
+    formData.append("confirmPassword", signUpData.confirmPassword);
+    formData.append("mobileNumber", signUpData.mobileNumber);
+    formData.append("address", signUpData.address);
+  
+    // Handle profile image
+    if (signUpData.profileImage) {
+      formData.append("profileImage", signUpData.profileImage);
+    }
+  
+    try {
+      // Send FormData to the server using axios
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/signup",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      alert("Successfully signed up");
+      console.log(response.data);
+      setIsloading(false);
+      // Optionally, redirect to another page or perform other actions
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Error submitting form. Check console for details.");
+      setIsloading(false);
+    } finally {
+      setIsloading(false);
+    }
+  };
+  
   return (
-    <section className="ezy__signup flex bg-white dark:bg-[#0b1727] text-zinc-900 dark:text-white overflow-hidden">
-      <div className="container px-4 mx-auto min-h-screen max-w-7xl">
-        <div className="grid grid-cols-12 h-96 lg:h-full">
-          <div className="col-span-12 lg:col-span-6 lg:col-start-7 order-2">
-            <div
-              className="hidden lg:block w-full h-full lg:w-[50vw] bg-cover bg-center bg-no-repeat float-left"
-              style={{
-                backgroundImage:
-                  "url(https://images.unsplash.com/photo-1506984548480-17c160170c06?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-                backgroundSize: "75%",
-              }}
-            ></div>
-          </div>
-          <div className="col-span-12 lg:col-span-5 py-12 ">
-            <div className="flex items-center justify-center h-full">
-              <div className="w-full">
-                <div className="bg-blue-100 bg-opacity-70 dark:bg-slate-800 shadow-xl rounded-2xl p-4 md:p-12">
-                  <h2 className="text-indigo-900 dark:text-white text-3xl font-bold mb-3">
-                    Create your Junktion account
-                  </h2>
-                  <div className="flex items-center mb-6 md:mb-12">
-                    <p className="mb-0 mr-2 opacity-50">
-                      Already have an account?
-                    </p>
-                    <Link to="/login">Login</Link>
-                  </div>
-                  <SignupForm />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="flex justify-evenly m-5 lg:m-8 gap-6 items-center flex-col lg:flex-row-reverse flex-grow">
+      <div className="text-center lg:text-left max-w-4xl">
+        <h1 className="text-4xl lg:text-6xl font-bold">Register now!</h1>
+        <p className="hidden lg:block mt-2 text-xl py-6">
+          Junktion is a waste management platform designed to streamline the
+          process of buying and selling scrap materials. The platform connects
+          Scrap Dealer with Kabadiwala, facilitating efficient transactions and
+          promoting sustainable waste management practices.
+        </p>
+        <p className="mt-2 text-md lg:text-xl">
+          Already have an account?
+          <Link to="/login" className="text-md font-semibold text-primary">
+            Login
+          </Link>
+        </p>
       </div>
-    </section>
+
+      <div className="card w-full max-w-2xl shrink-0 shadow-2xl bg-base-300">
+        <form
+          onSubmit={handleSubmit}
+          className="card-body grid grid-cols-1 lg:grid-cols-2 gap-4"
+        >
+          {/* Profile Picture Selector */}
+          <UploadProfile
+            profilePic={profilePic}
+            handleProfilePicChange={handleProfilePicChange}
+          />
+
+          {/* Role Toggle button */}
+          <RoleToggle handleRoleToggle={handleRoleToggle} role={role} />
+
+          {/* Name */}
+          <InputField
+            name="name"
+            type="text"
+            value={signUpData.name}
+            onChange={onInputChange}
+            placeholder="Name"
+            icon={AiOutlineUser}
+            isRequired={true}
+          />
+
+          {/* Email */}
+          <InputField
+            name="email"
+            type="email"
+            value={signUpData.email}
+            onChange={onInputChange}
+            placeholder="Email"
+            icon={AiOutlineMail}
+            isRequired={true}
+          />
+
+          {/* Password */}
+          <InputField
+            name="password"
+            type="password"
+            value={signUpData.password}
+            onChange={onInputChange}
+            placeholder="Password"
+            icon={AiOutlineLock}
+            isRequired={true}
+          />
+
+          {/* Confirm Password */}
+          <InputField
+            name="confirmPassword"
+            type="password"
+            value={signUpData.confirmPassword}
+            onChange={onInputChange}
+            placeholder="Confirm Password"
+            icon={AiOutlineLock}
+            isRequired={true}
+          />
+
+          {/* Mobile Number */}
+          <InputField
+            name="mobileNumber"
+            type="tel"
+            value={signUpData.mobileNumber}
+            onChange={onInputChange}
+            placeholder="Mobile Number"
+            icon={AiOutlinePhone}
+            isRequired={true}
+          />
+
+          {/* Address */}
+          <InputField
+            name="address"
+            type="text"
+            value={signUpData.address}
+            onChange={onInputChange}
+            placeholder="Address"
+            icon={AiOutlineHome}
+            isRequired={true}
+          />
+
+          {/* Sign Up Button */}
+          <div className="form-control lg:col-span-2 mt-6">
+            <button className="btn btn-primary w-full" disabled={isloading}>
+              {!isloading ? (
+                " Sign Up"
+              ) : (
+                <span className="loading loading-spinner"></span>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 
-export default Signup;
+export default SignUp;
