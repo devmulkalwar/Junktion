@@ -11,12 +11,23 @@ import {
   sendWelcomeEmail,
 } from "../mailtrap/emails.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import fs from "fs";
 
 // Register new user
 export const signup = async (req, res) => {
-  const { name, email, password, confirmPassword, mobileNumber, address, role } =
-    req.body;
+  const {
+    name,
+    email,
+    password,
+    confirmPassword,
+    mobile,
+    address,
+    role,
+  } = req.body;
   const profileImage = req.file;
+  if (profileImage) {
+    var { path } = profileImage;
+  }
 
   try {
     // Validate user input
@@ -27,16 +38,18 @@ export const signup = async (req, res) => {
       !password ||
       !name ||
       !confirmPassword ||
-      !mobileNumber ||
+      !mobile ||
       !address ||
       !role
     ) {
+      fs.unlinkSync(path);
       throw new Error("All fields are required");
     }
 
     if (password === confirmPassword) {
       const userAlreadyExists = await User.findOne({ email });
       if (userAlreadyExists) {
+        fs.unlinkSync(path);
         return res
           .status(400)
           .json({ success: false, message: "User already exists" });
@@ -46,10 +59,9 @@ export const signup = async (req, res) => {
       let profileImageUrl = "";
       console.log(profileImage);
       if (profileImage) {
-        const { path } = profileImage;
-        console.log("image path :", path)
+        console.log("image path :", path);
         const cloudinaryResult = await uploadOnCloudinary(path);
-        console.log("cloudianry result :",cloudinaryResult)
+        console.log("cloudianry result :", cloudinaryResult);
         profileImageUrl = cloudinaryResult.url;
       }
 
@@ -68,9 +80,9 @@ export const signup = async (req, res) => {
         name,
         verificationToken,
         verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
-        mobileNumber,
+        mobile ,
         address,
-        profileImage: profileImageUrl ,
+        profileImage: profileImageUrl,
       });
 
       console.log("User data before saving:", user); // Check if the data is correct

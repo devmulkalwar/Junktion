@@ -9,10 +9,12 @@ import {
 import RoleToggle from "../components/FormComponents/RoleToggle";
 import UploadProfile from "../components/FormComponents/UploadProfile";
 import InputField from "../components/FormComponents/InputField";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [role, setRole] = useState("Kabadiwala");
   const [profilePic, setProfilePic] = useState(null);
   const [signUpData, setSignUpData] = useState({
@@ -21,7 +23,7 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     role: "Scrap Dealer",
-    mobileNumber: "",
+    mobile: "",
     address: "",
     profileImage: null,
   });
@@ -52,24 +54,24 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsloading(true);
-    
+
     // Create a new FormData object
     const formData = new FormData();
-  
+
     // Append form fields to FormData
     formData.append("name", signUpData.name);
     formData.append("email", signUpData.email);
     formData.append("role", signUpData.role);
     formData.append("password", signUpData.password);
     formData.append("confirmPassword", signUpData.confirmPassword);
-    formData.append("mobileNumber", signUpData.mobileNumber);
+    formData.append("mobile", signUpData.mobile);
     formData.append("address", signUpData.address);
-  
+
     // Handle profile image
     if (signUpData.profileImage) {
       formData.append("profileImage", signUpData.profileImage);
     }
-  
+
     try {
       // Send FormData to the server using axios
       const response = await axios.post(
@@ -81,20 +83,43 @@ const SignUp = () => {
           },
         }
       );
-  
-      alert("Successfully signed up");
+
       console.log(response.data);
+      let message = response.data.message;
+      toast.success(`${message}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      navigate("/verify-otp");
       setIsloading(false);
       // Optionally, redirect to another page or perform other actions
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Error submitting form. Check console for details.");
+      let message = error.response.data.message;
+      toast.error(`${message}`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
       setIsloading(false);
     } finally {
       setIsloading(false);
     }
   };
-  
+
   return (
     <div className="flex justify-evenly m-5 lg:m-8 gap-6 items-center flex-col lg:flex-row-reverse flex-grow">
       <div className="text-center lg:text-left max-w-4xl">
@@ -173,9 +198,9 @@ const SignUp = () => {
 
           {/* Mobile Number */}
           <InputField
-            name="mobileNumber"
+            name="mobile"
             type="tel"
-            value={signUpData.mobileNumber}
+            value={signUpData.mobile}
             onChange={onInputChange}
             placeholder="Mobile Number"
             icon={AiOutlinePhone}
