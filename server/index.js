@@ -1,4 +1,3 @@
-import fs from "fs"
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -11,17 +10,34 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Database connection
+connectDB();
+
 // Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies (for form-data)
-app.use(cookieParser()); // Parse cookies
+
+// Enable CORS with credentials to allow cookies to be sent and received
+app.use(cors({
+  origin: "http://localhost:5173", // Frontend URL
+  credentials: true,               // Allow cookies
+}));
+
+app.use(express.json()); // To parse JSON requests
+app.use(express.urlencoded({ extended: true })); // To parse URL-encoded data (like form-data)
+app.use(cookieParser()); // To parse cookies in incoming requests
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes); // All authentication-related routes
 
-// Start server and connect to DB
-app.listen(PORT, async () => {
-  await connectDB();
+// Error handling (optional, but recommended for debugging)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({
+    status: "error",
+    message: "Something went wrong! Please try again later.",
+  });
+});
+
+// Start the server
+app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 });

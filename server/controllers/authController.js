@@ -91,7 +91,8 @@ export const signup = async (req, res) => {
       console.log("User saved successfully");
 
       // Generate JWT token and set cookie
-      generateTokenSetCookie(res, user._id);
+       const token = generateTokenSetCookie(res, user._id);
+       console.log(token); 
 
       // Send verification email
       await sendVerificationEmail(user.email, verificationToken);

@@ -19,22 +19,26 @@ export const ContextProvider = ({ children }) => {
   // Signup function
   const signup = async (formData) => {
     setIsLoading(true);
-    setError(null);
-   console.log("hellow");
-  
+    setError(null); // Reset error state before making the request
+    
     try {
       const response = await axios.post(`http://localhost:3000/api/auth/signup`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true, // Ensures cookies are sent and received
       });
   
       // Handle successful response
-      console.log(response);
-      setUser(response.data.user);
-      setMessage(response.data.message);
+      const user = response.data.user;
+      const message = response.data.message || "Sign up successful";
+  
+      // Set user and message
+      setUser(user);
       setIsAuthenticated(true);
-      toast.success(message || "Sign up successful", {
+  
+      // Show success toast
+      toast.success(message, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -44,12 +48,19 @@ export const ContextProvider = ({ children }) => {
         progress: undefined,
         theme: "light",
       });
+  
+      // Navigate to verify OTP page
       navigate("/verify-otp");
+  
     } catch (err) {
       console.error(err);
+  
+      // Handle error response
       const errorMessage = err.response?.data?.message || "Error signing up";
+  
+      // Set error state and display error toast
       setError(errorMessage);
-      toast.error(error, {
+      toast.error(errorMessage, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -59,11 +70,13 @@ export const ContextProvider = ({ children }) => {
         progress: undefined,
         theme: "light",
       });
-      throw err;
+  
     } finally {
+      // Stop loading spinner
       setIsLoading(false);
     }
   };
+  
   
   // Login function
   const login = async (email, password) => {
@@ -73,6 +86,8 @@ export const ContextProvider = ({ children }) => {
       const response = await axios.post(`http://localhost:3000/api/auth/login`, {
         email,
         password,
+      },{
+        withCredentials: true,
       });
       setUser(response.data.user);
       setMessage(response.data.message);
@@ -114,7 +129,9 @@ export const ContextProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      await axios.post(`http://localhost:3000/api/auth/logout`);
+      await axios.post(`http://localhost:3000/api/auth/logout`, {}, {
+        withCredentials: true, // Ensure cookies are sent with the request
+      });
       setUser(null);
       setIsAuthenticated(false);
       toast.success("Logout successful", {
@@ -154,7 +171,9 @@ export const ContextProvider = ({ children }) => {
     setError(null);
     console.log(code)
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/verify-email`, { code });
+      const response = await axios.post(`http://localhost:3000/api/auth/verify-email`, { code },{
+        withCredentials: true,
+      });
       setUser(response.data.user);
       setIsAuthenticated(true);
       toast.success(message || "Email verification successful", {
@@ -193,7 +212,10 @@ export const ContextProvider = ({ children }) => {
     setError(null);
   
     try {
-      const response = await axios.get(`http://localhost:3000/api/auth/check-auth`);
+      const response = await axios.get(`http://localhost:3000/api/auth/check-auth`, {
+        withCredentials: true,
+      });
+  
   
       // Log the response for debugging
       console.log("Check Auth Response:", response);
@@ -225,8 +247,10 @@ export const ContextProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_URL}/forgot-password`, {
+      const response = await axios.post(`http://localhost:3000/api/auth/forgot-password`, {
         email,
+      },{
+        withCredentials: true,
       });
       setMessage(response.data.message);
     } catch (err) {
@@ -244,8 +268,10 @@ export const ContextProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_URL}/reset-password/${token}`, {
+      const response = await axios.post(`http://localhost:3000/api/reset-password/${token}`, {
         password,
+      },{
+        withCredentials: true,
       });
       setMessage(response.data.message);
     } catch (err) {
