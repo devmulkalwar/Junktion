@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import ThemeButton from './ThemeButton';
 import HamburgerButton from './HamburgerButton';
 import NavMenu from './NavMenu';
+import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const Navbar= () => {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [scrolling, setScrolling] = useState(false); // Track scrolling state
+  const{logout} = useGlobalContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,7 +116,7 @@ const Navbar= () => {
                   <Link to="/">Settings</Link>
                 </li>
                 <li>
-                  <Link to="/login">Login</Link>
+                  <Link onClick={logout}>Logout</Link>
                 </li>
               </ul>
             </div>

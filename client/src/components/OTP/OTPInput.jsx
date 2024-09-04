@@ -16,7 +16,7 @@ const OTPInput = ({ otp, handleChange, handleKeyDown, handlePaste }) => {
           type="text"
           maxLength="1"
           ref={(el) => (inputRefs.current[index] = el)}
-          className="input input-bordered text-center  h-8 w-8 "
+          className="input-bordered rounded-md bg-base-100 text-center  h-8 w-8 "
           value={otp[index] || ""}
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index, inputRefs)}

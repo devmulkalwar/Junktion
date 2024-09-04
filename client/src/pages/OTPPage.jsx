@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import OTPInput from "../Components/OTP/OTPInput";
 import SubmitButton from "../Components/OTP/SubmitButton";
 import ResendOTP from "../Components/OTP/ResendOTP";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 const OTPPage = () => {
   const [otp, setOtp] = useState(Array(6).fill(''));
+  const {verifyEmail , isLoading} = useGlobalContext();
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -49,7 +51,9 @@ const OTPPage = () => {
   };
 
   const handleSubmit = () => {
-    console.log(otp.join(''));
+    const code = otp.join('') ;
+    console.log(code);
+    verifyEmail(code);
   };
 
   const handleResend = () => {

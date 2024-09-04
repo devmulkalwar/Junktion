@@ -12,9 +12,10 @@ import InputField from "../components/FormComponents/InputField";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 const SignUp = () => {
-  const navigate = useNavigate();
+  const {signup , isLoading } = useGlobalContext();
   const [role, setRole] = useState("Kabadiwala");
   const [profilePic, setProfilePic] = useState(null);
   const [signUpData, setSignUpData] = useState({
@@ -71,53 +72,9 @@ const SignUp = () => {
     if (signUpData.profileImage) {
       formData.append("profileImage", signUpData.profileImage);
     }
-
-    try {
-      // Send FormData to the server using axios
-      const response = await axios.post(
-        "http://localhost:8000/api/auth/signup",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log(response.data);
-      let message = response.data.message;
-      toast.success(`${message}`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-
-      navigate("/verify-otp");
-      setIsloading(false);
-      // Optionally, redirect to another page or perform other actions
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      let message = error.response.data.message;
-      toast.error(`${message}`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-
-      setIsloading(false);
-    } finally {
-      setIsloading(false);
-    }
+      console.log(formData)
+      await signup(formData);
+   
   };
 
   return (
@@ -220,8 +177,8 @@ const SignUp = () => {
 
           {/* Sign Up Button */}
           <div className="form-control lg:col-span-2 mt-6">
-            <button className="btn btn-primary w-full" disabled={isloading}>
-              {!isloading ? (
+            <button className="btn btn-primary w-full" disabled={isLoading}>
+              {!isLoading ? (
                 " Sign Up"
               ) : (
                 <span className="loading loading-spinner"></span>
