@@ -12,6 +12,9 @@ import {
 } from "../mailtrap/emails.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 // Register new user
 export const signup = async (req, res) => {
@@ -218,13 +221,15 @@ export const forgotPassword = async (req, res) => {
     // Send password reset email
     await sendPasswordResetEmail(
       user.email,
-      `${process.env.CLIENT_URI}/resetPassword/${resetToken}`
+      `${process.env.CLIENT_URL}/resetPassword/${resetToken}`
     );
 
     res.status(200).json({
       success: true,
       message: "Reset password email sent successfully",
+      resetToken
     });
+
   } catch (error) {
     console.log("Error in Forgot password ", error);
     res.status(400).json({ success: false, message: error.message });

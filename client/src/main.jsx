@@ -69,7 +69,7 @@ const router = createBrowserRouter([
         element: <OTPPage />,
       },
       {
-        path: "reset-password",
+        path: "reset-password/:token",
         element: <ResetPassword />,
       },
     ],

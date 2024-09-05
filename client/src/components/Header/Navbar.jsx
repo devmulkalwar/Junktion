@@ -6,9 +6,9 @@ import NavMenu from './NavMenu';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 
 const Navbar= () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const {isAuthenticated} = useGlobalContext();
   const [scrolling, setScrolling] = useState(false); // Track scrolling state
-  const{logout} = useGlobalContext();
+  const {logout} = useGlobalContext();
 
   useEffect(() => {
     const handleScroll = () => {

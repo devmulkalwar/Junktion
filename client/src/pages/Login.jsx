@@ -5,7 +5,7 @@ import InputField from "../components/FormComponents/InputField";
 import { useGlobalContext } from "../contexts/GlobalContext";
 
 const Login = () => {
-  const { login, isLoading } = useGlobalContext();
+  const { login, isLoading , forgotPassword} = useGlobalContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,6 +22,10 @@ const Login = () => {
     console.log(email,password);
     await login(email, password);
   };
+
+  const handleForgot = () =>{
+    forgotPassword(email);
+  }
   return (
     <div className="flex justify-evenly m-5 lg:m-8 gap-6 items-center flex-col lg:flex-row-reverse flex-grow">
       <div className="text-center lg:text-left max-w-4xl">
@@ -67,8 +71,8 @@ const Login = () => {
           {/* Forgot Password Link */}
           <div className="form-control">
             <Link
-              to="/reset-password"
               className="text-sm text-primary text-right"
+              onClick={handleForgot}
             >
               Forgot Password?
             </Link>

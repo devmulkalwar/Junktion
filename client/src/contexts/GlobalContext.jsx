@@ -176,7 +176,7 @@ export const ContextProvider = ({ children }) => {
       });
       setUser(response.data.user);
       setIsAuthenticated(true);
-      toast.success(message || "Email verification successful", {
+      toast.success("Email verification successful", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -246,17 +246,40 @@ export const ContextProvider = ({ children }) => {
   const forgotPassword = async (email) => {
     setIsLoading(true);
     setError(null);
+    setMessage(null);
+    console.log(email);
     try {
       const response = await axios.post(`http://localhost:3000/api/auth/forgot-password`, {
         email,
       },{
         withCredentials: true,
       });
+      console.log(response);
       setMessage(response.data.message);
+      toast.success(message || "Reset password email sent successfully", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate(`/reset-password/${response.data.resetToken}`);
     } catch (err) {
-      setError(
-        err.response.data.message || "Error sending reset password email"
-      );
+      const errorMessage = err.response?.data?.message || "Error in email verification";
+      setError(errorMessage);
+      toast.error(error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       throw err;
     } finally {
       setIsLoading(false);
@@ -267,6 +290,7 @@ export const ContextProvider = ({ children }) => {
   const resetPassword = async (token, password) => {
     setIsLoading(true);
     setError(null);
+    setMessage(null);
     try {
       const response = await axios.post(`http://localhost:3000/api/reset-password/${token}`, {
         password,
@@ -285,7 +309,7 @@ export const ContextProvider = ({ children }) => {
   // Execute checkAuth when the component mounts
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [isAuthenticated]);
 
   // Memoize the context value to avoid unnecessary re-renders
   const contextValue = {
