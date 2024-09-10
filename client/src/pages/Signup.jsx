@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { useGlobalContext } from "../contexts/GlobalContext";
 
 const SignUp = () => {
-  const {signup , isLoading } = useGlobalContext();
+  const { signup, isLoading } = useGlobalContext();
   const [role, setRole] = useState("Kabadiwala");
   const [profilePic, setProfilePic] = useState(null);
   const [signUpData, setSignUpData] = useState({
@@ -72,9 +72,12 @@ const SignUp = () => {
     if (signUpData.profileImage) {
       formData.append("profileImage", signUpData.profileImage);
     }
-      console.log(formData)
-      await signup(formData);
-   
+    
+    try {
+      await signup(formData); 
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

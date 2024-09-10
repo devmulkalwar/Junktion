@@ -102,7 +102,7 @@ export const signup = async (req, res) => {
 
       res.status(201).json({
         success: true,
-        message: "User created successfully",
+        message: "Signup successful and verification email sent",
         user: { ...user._doc, password: undefined },
       });
     } else {
@@ -110,7 +110,7 @@ export const signup = async (req, res) => {
     }
   } catch (error) {
     console.error("Error during signup:", error); // Log the error to see details
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: "Error during signup" });
   }
 };
 
@@ -146,8 +146,8 @@ export const verifyEmail = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("error in verifyEmail ", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.log("Error in email verification ", error);
+    res.status(500).json({ success: false, message: "Error in email verification" });
   }
 };
 
@@ -178,7 +178,7 @@ export const login = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Logged in successfully",
+      message: "Login successful",
       user: {
         ...user._doc,
         password: undefined,
@@ -221,26 +221,27 @@ export const forgotPassword = async (req, res) => {
     // Send password reset email
     await sendPasswordResetEmail(
       user.email,
-      `${process.env.CLIENT_URL}/resetPassword/${resetToken}`
+      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
     );
 
     res.status(200).json({
       success: true,
       message: "Reset password email sent successfully",
-      resetToken
+      resetToken : user.resetPasswordToken
     });
 
   } catch (error) {
     console.log("Error in Forgot password ", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: "Error in Forgot password " });
   }
 };
 
 //reset password
 export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
   try {
-    const { token } = req.params;
-    const { password } = req.body;
+    console.log("Reset password route hit!");
     console.log("token form reset password", token, password);
 
     const user = await User.findOne({
@@ -274,7 +275,7 @@ export const resetPassword = async (req, res) => {
       .json({ success: true, message: "Password reset successful" });
   } catch (error) {
     console.log("Error in resetPassword ", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: "Error in resetPassword " });
   }
 };
 
@@ -291,6 +292,6 @@ export const checkAuth = async (req, res) => {
     res.status(200).json({ success: true, user });
   } catch (error) {
     console.log("Error in checkAuth ", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: "Error in checkAuth " });
   }
 };

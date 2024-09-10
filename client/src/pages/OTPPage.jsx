@@ -5,8 +5,8 @@ import ResendOTP from "../Components/OTP/ResendOTP";
 import { useGlobalContext } from "../contexts/GlobalContext";
 
 const OTPPage = () => {
-  const [otp, setOtp] = useState(Array(6).fill(''));
-  const {verifyEmail , isLoading} = useGlobalContext();
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const { verifyEmail, isLoading } = useGlobalContext();
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -16,14 +16,14 @@ const OTPPage = () => {
       setOtp(newOtp);
 
       // Move to next input if value is entered
-      if (value !== '' && index < 5) {
+      if (value !== "" && index < 5) {
         e.target.nextElementSibling?.focus();
       }
     }
   };
 
   const handleKeyDown = (e, index, inputRefs) => {
-    if (e.key === 'Backspace' && otp[index] === '') {
+    if (e.key === "Backspace" && otp[index] === "") {
       if (index > 0) {
         inputRefs.current[index - 1].focus();
       }
@@ -32,8 +32,8 @@ const OTPPage = () => {
 
   const handlePaste = (e, inputRefs) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').slice(0, 6);
-    const digits = pastedData.split('').filter((char) => /^\d$/.test(char));
+    const pastedData = e.clipboardData.getData("text").slice(0, 6);
+    const digits = pastedData.split("").filter((char) => /^\d$/.test(char));
 
     const newOtp = [...otp];
     digits.forEach((digit, idx) => {
@@ -50,20 +50,26 @@ const OTPPage = () => {
     }
   };
 
-  const handleSubmit = () => {
-    const code = otp.join('') ;
+  const handleSubmit = async () => {
+    const code = otp.join("");
     console.log(code);
-    verifyEmail(code);
+    try {
+      await verifyEmail(code);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleResend = () => {
-    console.log('Resending OTP...');
+    console.log("Resending OTP...");
   };
 
   return (
     <div className="flex flex-grow mx-3 md:mx-auto my-6 flex-col items-center justify-center">
       <div className="flex flex-col w-full max-w-md min-w-sm shadow-xl p-6 rounded-lg bg-base-300">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 text-primary">Verify OTP</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 text-primary">
+          Verify OTP
+        </h2>
         <p className="text-center text-gray-600 mb-6 text-sm md:text-base">
           We have sent an OTP to your email: <br />
           <span className="font-semibold">devmulkalwar@gmail.com</span>

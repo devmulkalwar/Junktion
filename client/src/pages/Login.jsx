@@ -1,31 +1,32 @@
 import React, { useState } from "react";
 import { AiOutlineLock, AiOutlineMail } from "react-icons/ai"; // Lock and Mail icons
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputField from "../components/FormComponents/InputField";
 import { useGlobalContext } from "../contexts/GlobalContext";
 
 const Login = () => {
-  const { login, isLoading , forgotPassword} = useGlobalContext();
+  const { login, isLoading} = useGlobalContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log(email,password);
-    await login(email, password);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      await login(email,password); 
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleForgot = () =>{
-    forgotPassword(email);
-  }
   return (
     <div className="flex justify-evenly m-5 lg:m-8 gap-6 items-center flex-col lg:flex-row-reverse flex-grow">
       <div className="text-center lg:text-left max-w-4xl">
@@ -38,14 +39,13 @@ const Login = () => {
         <p className="mt-2 text-md lg:text-xl">
           Don't have an account yet?
           <Link to="/signup" className="text-md font-semibold text-primary">
-           
             Sign Up
           </Link>
         </p>
       </div>
 
       <div className="card w-full max-w-2xl shrink-0 shadow-2xl bg-base-300">
-        <form className="card-body grid grid-cols-1 gap-4">
+        <form onSubmit={handleSubmit} className="card-body grid grid-cols-1 gap-4">
           {/* Email */}
           <InputField
             name="Email"
@@ -71,8 +71,8 @@ const Login = () => {
           {/* Forgot Password Link */}
           <div className="form-control">
             <Link
+              to="/forgot-password"
               className="text-sm text-primary text-right"
-              onClick={handleForgot}
             >
               Forgot Password?
             </Link>

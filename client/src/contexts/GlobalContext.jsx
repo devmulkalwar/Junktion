@@ -3,6 +3,8 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+const SERVER_URL = "http://localhost:3000/api/auth";
+
 // Create a Context for the global state
 const GlobalContext = createContext();
 
@@ -16,108 +18,95 @@ export const ContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
 
+  const handleToast = (message, status) => {
+    const toastType = {
+      success: toast.success,
+      error: toast.error,
+    };
+
+    if (toastType[status]) {
+      toastType[status](message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   // Signup function
   const signup = async (formData) => {
     setIsLoading(true);
-    setError(null); // Reset error state before making the request
-    
+    setMessage(null);
+    setError(null);
+
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/signup`, formData, {
+      const response = await axios.post(`${SERVER_URL}/signup`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true, // Ensures cookies are sent and received
       });
-  
+
+      console.log(response);
+
       // Handle successful response
       const user = response.data.user;
-      const message = response.data.message || "Sign up successful";
-  
+      const message = response.data.message;
+
       // Set user and message
       setUser(user);
+      setMessage(message);
       setIsAuthenticated(true);
-  
-      // Show success toast
-      toast.success(message, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-  
-      // Navigate to verify OTP page
-      navigate("/verify-otp");
-  
+
     } catch (err) {
       console.error(err);
-  
-      // Handle error response
-      const errorMessage = err.response?.data?.message || "Error signing up";
-  
-      // Set error state and display error toast
+      const errorMessage = err.response.data.message;
       setError(errorMessage);
-      toast.error(errorMessage, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-  
+      throw err;
     } finally {
       // Stop loading spinner
       setIsLoading(false);
     }
   };
-  
-  
+
   // Login function
   const login = async (email, password) => {
     setIsLoading(true);
+    setMessage(null);
     setError(null);
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/login`, {
-        email,
-        password,
-      },{
-        withCredentials: true,
-      });
-      setUser(response.data.user);
-      setMessage(response.data.message);
+      const response = await axios.post(
+        `${SERVER_URL}/login`,
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+
+      // Handle successful response
+      const user = response.data.user;
+      const message = response.data.message;
+
+      // Set user and message
+      setUser(user);
+      setMessage(message);
       setIsAuthenticated(true);
-      toast.success(message || "Login successful", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+
       navigate("/");
     } catch (err) {
       console.error(err);
-      const errorMessage = err.response?.data?.message || "Error in Login";
+      const errorMessage = err.response.data.message;
       setError(errorMessage);
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      navigate("/");
+      navigate("/login");
       throw err;
     } finally {
       setIsLoading(false);
@@ -127,38 +116,25 @@ export const ContextProvider = ({ children }) => {
   // Logout function
   const logout = async () => {
     setIsLoading(true);
+    setMessage(null);
     setError(null);
     try {
-      await axios.post(`http://localhost:3000/api/auth/logout`, {}, {
-        withCredentials: true, // Ensure cookies are sent with the request
-      });
+      await axios.post(
+        `${SERVER_URL}/logout`,
+        {},
+        {
+          withCredentials: true, // Ensure cookies are sent with the request
+        }
+      );
       setUser(null);
       setIsAuthenticated(false);
-      toast.success("Logout successful", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+    
       navigate("/login");
     } catch (err) {
       console.error(err);
       const errorMessage = err.response?.data?.message || "Error in Logout";
       setError(errorMessage);
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+     
       throw err;
     } finally {
       setIsLoading(false);
@@ -168,38 +144,25 @@ export const ContextProvider = ({ children }) => {
   // Email Verification function
   const verifyEmail = async (code) => {
     setIsLoading(true);
+    setMessage(null);
     setError(null);
-    console.log(code)
+
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/verify-email`, { code },{
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${SERVER_URL}/verify-email`,
+        { code },
+        {
+          withCredentials: true,
+        }
+      );
       setUser(response.data.user);
       setIsAuthenticated(true);
-      toast.success("Email verification successful", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      
       navigate("/");
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Error in email verification";
+      const errorMessage =
+        err.response?.data?.message || "Error in email verification";
       setError(errorMessage);
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
       throw err;
     } finally {
       setIsLoading(false);
@@ -210,16 +173,15 @@ export const ContextProvider = ({ children }) => {
   const checkAuth = async () => {
     setIsCheckingAuth(true);
     setError(null);
-  
+
     try {
-      const response = await axios.get(`http://localhost:3000/api/auth/check-auth`, {
+      const response = await axios.get(`${SERVER_URL}/check-auth`, {
         withCredentials: true,
       });
-  
-  
+
       // Log the response for debugging
       console.log("Check Auth Response:", response);
-  
+
       // Update user and authentication status based on the response
       if (response.data.user) {
         setUser(response.data.user);
@@ -231,16 +193,17 @@ export const ContextProvider = ({ children }) => {
     } catch (err) {
       // Log error for debugging
       console.error("Check Auth Error:", err);
-  
+
       // Handle errors
       setUser(null);
       setIsAuthenticated(false);
-      setError(err.response?.data?.message || "Error checking authentication status");
+      setError(
+        err.response?.data?.message || "Error checking authentication status"
+      );
     } finally {
       setIsCheckingAuth(false);
     }
   };
-  
 
   // Forgot Password function
   const forgotPassword = async (email) => {
@@ -249,11 +212,15 @@ export const ContextProvider = ({ children }) => {
     setMessage(null);
     console.log(email);
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/forgot-password`, {
-        email,
-      },{
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${SERVER_URL}/forgot-password`,
+        {
+          email,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       console.log(response);
       setMessage(response.data.message);
       toast.success(message || "Reset password email sent successfully", {
@@ -266,9 +233,9 @@ export const ContextProvider = ({ children }) => {
         progress: undefined,
         theme: "light",
       });
-      navigate(`/reset-password/${response.data.resetToken}`);
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Error in email verification";
+      const errorMessage =
+        err.response?.data?.message || "Error in password reset";
       setError(errorMessage);
       toast.error(error, {
         position: "top-center",
@@ -291,15 +258,44 @@ export const ContextProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     setMessage(null);
+
     try {
-      const response = await axios.post(`http://localhost:3000/api/reset-password/${token}`, {
-        password,
-      },{
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${SERVER_URL}/reset-password/${token}`, // Ensure URL is correct
+        { password },
+        { withCredentials: true }
+      );
+
       setMessage(response.data.message);
+      toast.success(response.data.message || "Password Reset Successful", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch (err) {
-      setError(err.response.data.message || "Error resetting password");
+      const errorMessage =
+        err.response?.data?.message || "Error in password reset";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
       throw err;
     } finally {
       setIsLoading(false);
@@ -309,7 +305,7 @@ export const ContextProvider = ({ children }) => {
   // Execute checkAuth when the component mounts
   useEffect(() => {
     checkAuth();
-  }, [isAuthenticated]);
+  }, [user]);
 
   // Memoize the context value to avoid unnecessary re-renders
   const contextValue = {

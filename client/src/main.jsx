@@ -21,6 +21,7 @@ import ProtectedRoute from "./components/ProtectedRoute"; // Import the Protecte
 import NonProtectedRoute from "./components/NonProtectedRoute.jsx";
 import OTPPage from "./pages/OTPPage.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -61,12 +62,16 @@ const router = createBrowserRouter([
         element: <Services />,
       },
       {
-        path: "landingpage",
+        path: "landing-page",
         element: <Landing />,
       },
       {
         path: "verify-otp",
         element: <OTPPage />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword/>,
       },
       {
         path: "reset-password/:token",
@@ -77,7 +82,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+ 
     <RouterProvider router={router} />
-  </StrictMode>
+
 );
