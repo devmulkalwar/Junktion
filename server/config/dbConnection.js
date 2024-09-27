@@ -1,9 +1,8 @@
 // Import mongoose and dotenv in ESM style
 import mongoose from 'mongoose';
-import { config as configDotenv } from 'dotenv';
+import dotenv from 'dotenv'
 
-// Load .env variables
-configDotenv();
+dotenv.config();
 
 // Async function to connect to MongoDB
 const connectDB = async () => {
